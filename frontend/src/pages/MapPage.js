@@ -1,10 +1,30 @@
 import React, { useState } from 'react';
-import MinimalMapView from '../components/map/MinimalMapView';
+import CustomStyledMapView from "../components/mapTiler/CustomStyledMapView";
+
+const MAPTILER_KEY = 'g0AZaldfy32EOxnSpvMv'; // consider moving to env
+// Correct style URL must end with /style.json?key=KEY
+const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bdd5-ad003bc606f4/style.json?key=${MAPTILER_KEY}`;
 
 export default function MapPage() {
   const [center, setCenter] = useState([48.1486, 17.1077]);
   const [zoom, setZoom] = useState(15);
-  const [polygons, setPolygons] = useState([]);
+  const [polygons, setPolygons] = useState(() => {
+    // seed one polygon so map is not empty initially
+    const id = `poly-seed`;
+    const centerLat = 48.1486;
+    const centerLng = 17.1077;
+    const N = 5;
+    const radiusMeters = 100;
+    const latFactor = 1 / 111320;
+    const lonFactor = 1 / (111320 * Math.cos((centerLat * Math.PI) / 180));
+    const points = Array.from({ length: N }, (_, i) => {
+      const angle = (2 * Math.PI * i) / N;
+      const dx = radiusMeters * Math.cos(angle);
+      const dy = radiusMeters * Math.sin(angle);
+      return [centerLat + dy * latFactor, centerLng + dx * lonFactor];
+    });
+    return [{ id, points, color: '#1f4d9b' }];
+  });
   const [polyPoints, setPolyPoints] = useState(6);
 
   const addBuildingShape = () => {
@@ -27,7 +47,7 @@ export default function MapPage() {
   return (
     <div className='map-page' style={{ padding: '1rem' }}>
       <h2>Building Footprints Map</h2>
-      <p>Minimal view: only street names and custom building shapes.</p>
+      <p>Custom MapTiler style with building footprint polygons only. Use the controls to generate shapes.</p>
       <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
         <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
           Zoom: {zoom}
@@ -44,13 +64,15 @@ export default function MapPage() {
           <button onClick={addBuildingShape}>Add Building Shape</button>
         </div>
       </div>
-      <MinimalMapView
-        center={center}
-        zoom={zoom}
-        polygons={polygons}
-        height='600px'
-        tileVariant='satelliteWithLabels'
+
+      <CustomStyledMapView
+          mapStyleUrl={MY_CUSTOM_STYLE_URL}
+          center={center}
+          zoom={zoom}
+          polygons={polygons}
+          height='600px'
       />
+
       <div style={{ marginTop: '1rem' }}>
         <h3>Building Shapes ({polygons.length})</h3>
         <div style={{ display: 'grid', gap: '.75rem', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))' }}>

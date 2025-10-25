@@ -12,10 +12,20 @@
     "build": "cd frontend && npm run build",
     "start": "cd backend && npm start"
   },
-  "keywords": ["fullstack", "nodejs", "react", "python", "data-science"],
+  "keywords": [
+    "fullstack",
+    "nodejs",
+    "react",
+    "python",
+    "data-science"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "maplibre-gl": "^5.9.0",
+    "react-map-gl": "^8.1.0"
   }
 }
