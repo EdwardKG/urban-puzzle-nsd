@@ -2,8 +2,13 @@ import React, {useEffect, useState} from 'react';
 import CustomStyledMapView from "../components/mapTiler/CustomStyledMapView";
 import {parseAndReprojectBrownfields} from "../utils/brownfieldParser";
 import rawBrownfields from '../data/brownfield.json';
+import localIcon from '../data/icon.svg';
 
 const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bdd5-ad003bc606f4/style.json?key=g0AZaldfy32EOxnSpvMv`;
+
+const TEST_BROWNFIELD_NAMES = [
+  'Old Factory','Warehouse A','Rail Yard','Abandoned Mill','Former Depot','Storage Lot','Vacant Plant','Old Brewery','Unused Hangar','Dockside Parcel','Brick Works','Foundry Site','Lumber Yard','Coal Storage','Transit Hub','Processing Yard','Chemical Lot','Glassworks','Steel Shed','Machinery Hall','Paper Mill','Timber Depot','Freight Station','Industrial Park','Assembly Hall'
+];
 
 export default function MapPage() {
   const [center] = useState([48.1486, 17.1077]);
@@ -22,13 +27,17 @@ export default function MapPage() {
 
   useEffect(() => {
     const parsed = parseAndReprojectBrownfields(rawBrownfields);
-    const polygons = parsed.map(bf => ({
-      id: bf.id,
-      points: bf.points, // full geometry
-      color: '#1f4d9b',
-      fillColor: 'rgba(31,77,155,0.35)',
-      properties: bf,
-    }));
+    const polygons = parsed.map((bf, idx) => {
+      const testName = TEST_BROWNFIELD_NAMES[idx % TEST_BROWNFIELD_NAMES.length];
+      const finalName = (bf.name && bf.name !== 'N/A') ? bf.name : testName;
+      return {
+        id: bf.id,
+        points: bf.points,
+        color: '#1f4d9b',
+        fillColor: 'rgba(31,77,155,0.35)',
+        properties: { ...bf, name: finalName },
+      };
+    });
     setBrownfields(polygons);
 
     const centroidMarkers = polygons.map(poly => {
@@ -37,9 +46,9 @@ export default function MapPage() {
       return {
         id: `centroid-${poly.id}`,
         position: c,
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854866.png', // generic location pin
-        iconName: 'centroid-pin',
-        label: '',
+        iconUrl: localIcon,
+        iconName: 'local-centroid-icon',
+        label: poly.properties.name,
       };
     }).filter(Boolean);
     setMarkers(centroidMarkers);
