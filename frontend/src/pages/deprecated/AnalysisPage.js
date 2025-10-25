@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { pythonService } from '../services/api';
-import AnalysisResult from '../components/AnalysisResult';
+import { pythonService } from '../../services/api';
+import AnalysisResult from '../../components/deprecated/AnalysisResult';
 
 function AnalysisPage() {
   const [input, setInput] = useState('1, 2, 3, 4, 5, 6, 7, 8, 9, 10');

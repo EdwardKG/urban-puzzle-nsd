@@ -6,23 +6,7 @@ const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bd
 export default function MapPage() {
   const [center, setCenter] = useState([48.1486, 17.1077]);
   const [zoom, setZoom] = useState(15);
-  const [polygons, setPolygons] = useState(() => {
-    // seed one polygon so map is not empty initially
-    const id = `poly-seed`;
-    const centerLat = 48.1486;
-    const centerLng = 17.1077;
-    const N = 5;
-    const radiusMeters = 100;
-    const latFactor = 1 / 111320;
-    const lonFactor = 1 / (111320 * Math.cos((centerLat * Math.PI) / 180));
-    const points = Array.from({ length: N }, (_, i) => {
-      const angle = (2 * Math.PI * i) / N;
-      const dx = radiusMeters * Math.cos(angle);
-      const dy = radiusMeters * Math.sin(angle);
-      return [centerLat + dy * latFactor, centerLng + dx * lonFactor];
-    });
-    return [{ id, points, color: '#1f4d9b' }];
-  });
+  const [polygons, setPolygons] = useState([]);
   const [polyPoints, setPolyPoints] = useState(6);
 
   const addBuildingShape = () => {
@@ -43,45 +27,20 @@ export default function MapPage() {
   };
 
   return (
-    <div className='map-page' style={{ padding: '1rem' }}>
-      <h2>Building Footprints Map</h2>
-      <p>Custom MapTiler style with building footprint polygons only. Use the controls to generate shapes.</p>
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-          Zoom: {zoom}
-          <input type='range' min={12} max={19} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} />
-        </label>
-        <div style={{ display: 'flex', gap: '.5rem' }}>
-          <input type='number' step='0.0005' value={center[0]} onChange={(e) => setCenter([Number(e.target.value), center[1]])} />
-          <input type='number' step='0.0005' value={center[1]} onChange={(e) => setCenter([center[0], Number(e.target.value)])} />
-        </div>
-        <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-          <label>N points:
-            <input style={{ width: 60 }} type='number' min={3} max={30} value={polyPoints} onChange={(e) => setPolyPoints(Number(e.target.value))} />
-          </label>
-          <button onClick={addBuildingShape}>Add Building Shape</button>
-        </div>
-      </div>
-
+    <div className='map-page' style={{ margin: 0, padding: 0 }}> {/* remove all spacing */}
       <CustomStyledMapView
           mapStyleUrl={MY_CUSTOM_STYLE_URL}
           center={center}
           zoom={zoom}
           polygons={polygons}
-          height='600px'
+          useViewportHeight
+          maxHeightOffset={0}
+          hideMapBorders
+          showPolygonOutline={false}
+          containerBorderRadius={0}
+          height="100vh"
+          width="100vw"
       />
-
-      <div style={{ marginTop: '1rem' }}>
-        <h3>Building Shapes ({polygons.length})</h3>
-        <div style={{ display: 'grid', gap: '.75rem', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))' }}>
-          {polygons.map(p => (
-            <div key={p.id} style={{ background: '#fff', border: '1px solid #ddd', padding: '.75rem', borderRadius: 6 }}>
-              <strong>Shape {p.id.split('-')[1]}</strong>
-              <div style={{ fontSize: 12, color: '#666' }}>{p.points.length} vertices</div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { dataService } from '../services/api';
-import DataItem from '../components/DataItem';
-import DataForm from '../components/DataForm';
+import { dataService } from '../../services/api';
+import DataItem from '../../components/deprecated/DataItem';
+import DataForm from '../../components/deprecated/DataForm';
 
 function DataPage() {
   const [data, setData] = useState([]);

@@ -35,6 +35,8 @@ export default function CustomStyledMapView({
   height = '600px',
   width = '100%',
   mapStyleUrl,
+  useViewportHeight = false, // new: if true ignore height and fill viewport
+  maxHeightOffset = 0, // new: subtract pixels (e.g. header height)
 }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -117,13 +119,23 @@ export default function CustomStyledMapView({
     }
   }, [polygonGeoJSON]);
 
+  // Resize map on window resize if using viewport height
+  useEffect(() => {
+    if (!useViewportHeight) return;
+    const handler = () => {
+      if (mapRef.current) mapRef.current.resize();
+    };
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [useViewportHeight]);
+
   if (!mapStyleUrl) {
     return (
-      <div style={{ width, height, display: 'grid', placeContent: 'center', background: '#eee' }}>
+      <div style={{ width, height: useViewportHeight ? `calc(100vh - ${maxHeightOffset}px)` : height, display: 'grid', placeContent: 'center', background: '#eee' }}>
         <p style={{ color: '#555' }}>Missing mapStyleUrl prop.</p>
       </div>
     );
   }
 
-  return <div ref={mapContainerRef} style={{ width, height, borderRadius: 8, overflow: 'hidden' }} />;
+  return <div ref={mapContainerRef} style={{ width: width, height: useViewportHeight ? `calc(100vh - ${maxHeightOffset}px)` : height, maxHeight: '100vh', borderRadius: 0, overflow: 'hidden', margin: 0, padding: 0 }} />;
 }
