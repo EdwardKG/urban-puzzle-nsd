@@ -1,0 +1,21 @@
+{
+  "name": "urban-puzzle-nsd",
+  "version": "1.0.0",
+  "description": "Full-stack web application with Node.js backend, React frontend, and Python data science service",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../python-service && pip install -r requirements.txt",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:python\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:python": "cd python-service && source venv/bin/activate && python3 app.py",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "keywords": ["fullstack", "nodejs", "react", "python", "data-science"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
