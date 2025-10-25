@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import CustomStyledMapView from "../components/mapTiler/CustomStyledMapView";
 
-const MAPTILER_KEY = 'g0AZaldfy32EOxnSpvMv'; // consider moving to env
-// Correct style URL must end with /style.json?key=KEY
-const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bdd5-ad003bc606f4/style.json?key=${MAPTILER_KEY}`;
-
+const MAPTILER_KEY = 'g0AZaldfy32EOxnSpvMv';
+const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bdd5-ad003bc606f4/style.json?key=g0AZaldfy32EOxnSpvMv`;
 export default function MapPage() {
   const [center, setCenter] = useState([48.1486, 17.1077]);
   const [zoom, setZoom] = useState(15);
