@@ -1,24 +1,16 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 
 import MapPage from './pages/MapPage';
+import AtlasHeader from './components/AtlasHeader';
 
 function App() {
     return (
     <Router>
       <div className="App">
+        <AtlasHeader />
         <MapPage />
-
-        {/*<HeaderWithMap />
-        <main className="container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/data" element={<DataPage />} />
-            <Route path="/analysis" element={<AnalysisPage />} />
-            <Route path="/map" element={<MapPage />} />
-          </Routes>
-        </main>*/}
       </div>
     </Router>
   );
