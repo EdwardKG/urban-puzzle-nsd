@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import CustomStyledMapView from "../components/mapTiler/CustomStyledMapView";
-import {parseAndReprojectBrownfields} from "../utils/brownfieldParser";
-import rawBrownfields from '../data/brownfield.json';
 import localIcon from '../data/icon.svg';
+import data from '../data/brownfields_data.json';
+import { parseWktPolygonCoordinates } from '../utils/wktParser';
 
 const MY_CUSTOM_STYLE_URL = `https://api.maptiler.com/maps/019a1bc0-fc19-732b-bdd5-ad003bc606f4/style.json?key=g0AZaldfy32EOxnSpvMv`;
 
@@ -26,7 +26,22 @@ export default function MapPage() {
   };
 
   useEffect(() => {
-    const parsed = parseAndReprojectBrownfields(rawBrownfields);
+
+    const polygons = data.map((bf, idx) => {
+      const testName = TEST_BROWNFIELD_NAMES[idx % TEST_BROWNFIELD_NAMES.length];
+      const finalName = (bf.name && bf.name !== 'N/A') ? bf.name : testName;
+      const points = bf.points && bf.points.length ? bf.points : (bf.shape ? parseWktPolygonCoordinates(bf.shape, { order: 'latlng' }) : []);
+      return {
+        id: bf.id,
+        points,
+        color: '#1f4d9b',
+        fillColor: 'rgba(31,77,155,0.35)',
+        properties: { ...bf, name: finalName },
+      };
+    });
+
+
+    /*const parsed = parseAndReprojectBrownfields(rawBrownfields);
     const polygons = parsed.map((bf, idx) => {
       const testName = TEST_BROWNFIELD_NAMES[idx % TEST_BROWNFIELD_NAMES.length];
       const finalName = (bf.name && bf.name !== 'N/A') ? bf.name : testName;
@@ -37,7 +52,7 @@ export default function MapPage() {
         fillColor: 'rgba(31,77,155,0.35)',
         properties: { ...bf, name: finalName },
       };
-    });
+    });*/
     setBrownfields(polygons);
 
     const centroidMarkers = polygons.map(poly => {
@@ -83,6 +98,11 @@ export default function MapPage() {
         containerBorderRadius={0}
         height="100vh"
         width="100vw"
+        polygonFillColor="rgba(0,150,136,0.35)"
+        polygonOutlineColor="#009688"
+        patternType="none"
+        patternForegroundColor="#004d40"
+        patternBackgroundColor="rgba(0,150,136,0.1)"
       />
     </div>
   );

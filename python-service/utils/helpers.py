@@ -1,5 +1,6 @@
 import numpy as np
 from typing import List, Any
+from .shape_parser import parse_shape_field, ShapeParseError
 
 def validate_numerical_data(data: List[Any]) -> bool:
     """Validate if data contains only numerical values"""
